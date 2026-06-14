@@ -33,7 +33,7 @@ export class BotService implements OnModuleInit, OnModuleDestroy {
         clearTimeout(this.waitingForCode.get(userId));
       }
 
-      const timer = setTimeout(
+      const timer = setTimeout( 
         () => {
           this.waitingForCode.delete(userId);
           ctx.telegram

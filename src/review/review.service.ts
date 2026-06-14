@@ -9,11 +9,11 @@ export class ReviewService {
   private prompt: string;
 
   constructor(private configService: ConfigService) {
-    const apiKey = this.configService.get<string>('DEEPSEEK_API_KEY');
-    if (!apiKey) throw new Error('DEEPSEEK_API_KEY не найден в .env');
+    const apiKey = this.configService.get<string>('OPENROUTER_API_KEY');
+    if (!apiKey) throw new Error('OPENROUTER_API_KEY не найден в .env');
 
-    const model = this.configService.get<string>('DEEPSEEK_MODEL');
-    if (!model) throw new Error('DEEPSEEK_MODEL не найден в .env');
+    const model = this.configService.get<string>('OPENROUTER_MODEL');
+    if (!model) throw new Error('OPENROUTER_MODEL не найден в .env');
 
     const prompt = this.configService.get<string>('ROAST_PROMPT');
     if (!prompt) throw new Error('ROAST_PROMPT не найден в .env');
@@ -22,7 +22,7 @@ export class ReviewService {
     this.prompt = prompt;
 
     this.openAI = new OpenAI({
-      baseURL: 'https://api.deepseek.com/v1',
+      baseURL: 'https://openrouter.ai/api/v1',
       apiKey: apiKey,
       defaultHeaders: {
         'HTTP-Referer': 'https://t.me/GeminiRoast_bot',
