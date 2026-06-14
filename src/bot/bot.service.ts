@@ -33,7 +33,7 @@ export class BotService implements OnModuleInit, OnModuleDestroy {
         clearTimeout(this.waitingForCode.get(userId));
       }
 
-      const timer = setTimeout( 
+      const timer = setTimeout(
         () => {
           this.waitingForCode.delete(userId);
           ctx.telegram
@@ -116,7 +116,9 @@ export class BotService implements OnModuleInit, OnModuleDestroy {
     });
     const webHook = this.configService.get<string>('WEBHOOK_URL');
     if (webHook) {
-      this.bot.launch({ webhook: { domain: webHook, port: 3000 } });
+      this.bot.launch({
+        webhook: { domain: webHook, port: 3000, path: '/telegram' },
+      });
     } else {
       this.bot.launch();
     }
