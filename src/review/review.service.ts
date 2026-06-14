@@ -9,10 +9,12 @@ export class ReviewService {
   private prompt: string;
 
   constructor(private configService: ConfigService) {
-    const apiKey = this.configService.get<string>('DEEPSEEK_API_KEY');
-    if (!apiKey) throw new Error('DEEPSEEK_API_KEY не найден в .env');
+    const apiKey = this.configService.get<string>('OPENROUTER_API_KEY');
+    if (!apiKey) throw new Error('OPENROUTER_API_KEY не найден в .env');
 
-    const model = this.configService.get<string>('DEEPSEEK_MODEL', 'deepseek-chat');
+    const model = this.configService.get<string>('OPENROUTER_MODEL');
+    if (!model) throw new Error('OPENROUTER_MODEL не найден в .env');
+
     const prompt = this.configService.get<string>('ROAST_PROMPT');
     if (!prompt) throw new Error('ROAST_PROMPT не найден в .env');
 
@@ -20,13 +22,16 @@ export class ReviewService {
     this.prompt = prompt;
 
     this.openAI = new OpenAI({
-      baseURL: 'https://api.deepseek.com/v1',
+      baseURL: 'https://openrouter.ai/api/v1',
       apiKey: apiKey,
+      defaultHeaders: {
+        'HTTP-Referer': 'https://t.me/GeminiRoast_bot',
+        'X-Title': 'GeminiRoast',
+      },
     });
   }
-
-  async codeReview(code: string): Promise<string> {
-    const fullPrompt = `${this.prompt}\n\nВОТ КОД НА РЕВЬЮ:\n\n${code}`;
+  async codeReview(code: string) {
+    const fullPrompt = `${this.prompt} \n\n ВОТ КОД НА РЕВЬЮ: \n\n ${code}`;
 
     try {
       const completion = await this.openAI.chat.completions.create({
@@ -35,7 +40,6 @@ export class ReviewService {
         temperature: 0.3,
         max_tokens: 2048,
       });
-
       const reviewText = completion.choices[0]?.message?.content;
 
       if (!reviewText) {
@@ -44,9 +48,11 @@ export class ReviewService {
 
       return reviewText;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error('Ошибка при запросе к DeepSeek:', errorMessage);
-      return `Ошибка при запросе к AI: ${errorMessage}. Проверьте ключ и модель в .env.`;
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      console.error('Ошибка при запросе:', error);
+      return `Ошибка при запросе к AI ${errorMessage}. Проверьте ключ и модель в .env`;
     }
   }
 }
+
