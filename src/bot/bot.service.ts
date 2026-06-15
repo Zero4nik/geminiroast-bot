@@ -114,14 +114,8 @@ export class BotService implements OnModuleInit, OnModuleDestroy {
         );
       }
     });
-    const webHook = this.configService.get<string>('WEBHOOK_URL');
-    if (webHook) {
-      this.bot.launch({
-        webhook: { domain: webHook, port: 3000 },
-      });
-    } else {
-      this.bot.launch();
-    }
+
+    this.bot.launch();
   }
   private looksLikeCode(text: string): boolean {
     if (text.length < 10) return false;
