@@ -6,7 +6,7 @@ import { Telegraf } from 'telegraf';
 @Injectable()
 export class BotService implements OnModuleInit, OnModuleDestroy {
   private bot!: Telegraf;
-
+  private users = new Set<number>();
   waitingForCode = new Map<number, NodeJS.Timeout>();
   constructor(
     private configService: ConfigService,
@@ -24,6 +24,12 @@ export class BotService implements OnModuleInit, OnModuleDestroy {
         `Привет, ${username}. Я GeminiRoast , твой лучший(скромный) AI-ревьюер.\n\n` +
           `Отправь команду /review и затем пришли мне код.`,
       );
+    });
+    this.bot.command('stats', (ctx) => {
+      const userId = ctx.from?.id;
+      if (!userId) return;
+      if (userId) this.users.add(userId);
+      return ctx.reply(`👥 Пользователей: ${this.users.size}`);
     });
     this.bot.command('review', (ctx) => {
       const userId = ctx.from?.id;
