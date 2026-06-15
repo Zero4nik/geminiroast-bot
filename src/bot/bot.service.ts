@@ -117,7 +117,7 @@ export class BotService implements OnModuleInit, OnModuleDestroy {
     const webHook = this.configService.get<string>('WEBHOOK_URL');
     if (webHook) {
       this.bot.launch({
-        webhook: { domain: webHook, port: 3000, path: '/telegram' },
+        webhook: { domain: webHook, port: 3000 },
       });
     } else {
       this.bot.launch();
